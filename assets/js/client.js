@@ -9,6 +9,7 @@
   var d = document;
 
   var config = window.commentsConfig || {};
+  var store  = window.localStorage   || false;
 
   //
   // ## Init
@@ -57,6 +58,8 @@
       { label: conf('emailField', 'Email'), name: 'email', type: 'email' },
     ];
 
+    var credentials = getCredentials();
+
     for (var i in fields) {
       var fieldset = d.createElement('fieldset');
       var label = d.createElement('label');
@@ -65,6 +68,10 @@
       field.setAttribute('type', fields[i].type);
       field.setAttribute('name', fields[i].name);
       field.setAttribute('placeholder', fields[i].label);
+
+      if (credentials[fields[i].name]) {
+        field.setAttribute('value', credentials[fields[i].name]);
+      }
 
       fieldset.appendChild(label);
       fieldset.appendChild(field);
@@ -94,24 +101,34 @@
   //
   // ## Post Comment
   //
+  // @TODO: Validate email.
+  //
   function postComment(event) {
     event.preventDefault();
 
     /* jshint validthis: true */
     var form = this;
 
+    // @TODO: make this prettier
     var fields = ['username', 'email', 'comment', 'resource'];
+    var username = '';
+    var email = '';
     var data = [];
     for (var i in fields) {
       var key = fields[i];
       var val = form.querySelector('[name="' + key + '"]').value;
       data.push([key, val].map(encodeURIComponent).join('='));
+
+      if (key === 'username') username = val;
+      if (key === 'email') email = val;
     }
 
     ajax(form.getAttribute('action'), 'POST', data.join('&'), function (err, res) {
       // @TODO: Handle response
       console.log(err, res);
     });
+
+    saveCredentials(username, email);
 
     return false;
   }
@@ -224,6 +241,30 @@
         'subscribe': resource
       }));
     };
+  }
+
+  //
+  // ## Save Credentials
+  //
+  function saveCredentials(name, email) {
+    if (!store) return;
+    store.setItem('comments:user', JSON.stringify({
+      username: name,
+      email: email
+    }));
+  }
+
+  function getCredentials() {
+    if (!store) return;
+    var credentials = store.getItem('comments:user');
+    if (credentials) {
+      credentials = JSON.parse(credentials);
+    }
+    else {
+      credentials = { username: '', email: ''};
+    }
+
+    return credentials;
   }
 
   init();
