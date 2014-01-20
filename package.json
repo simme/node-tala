@@ -1,0 +1,25 @@
+{
+  "name": "comments",
+  "version": "0.0.0",
+  "description": "Self hosted commenting platform for node.",
+  "main": "comments.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "comments",
+    "level",
+    "blog"
+  ],
+  "author": "Simon Ljungberg <hi@iamsim.me>",
+  "license": "MIT",
+  "dependencies": {
+    "levelup": "~0.18.2",
+    "hapi": "~2.0.0",
+    "leveldown": "~0.10.2",
+    "lodash": "~2.4.1",
+    "async": "~0.2.9",
+    "JSONStream": "~0.7.1",
+    "ws": "~0.4.31"
+  }
+}
