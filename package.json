@@ -1,8 +1,8 @@
 {
-  "name": "comments",
-  "version": "0.0.0",
+  "name": "tala",
+  "version": "0.0.1",
   "description": "Self hosted commenting platform for node.",
-  "main": "comments.js",
+  "main": "tala.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -18,7 +18,6 @@
     "hapi": "~2.0.0",
     "leveldown": "~0.10.2",
     "lodash": "~2.4.1",
-    "async": "~0.2.9",
     "JSONStream": "~0.7.1",
     "ws": "~0.4.31"
   }
