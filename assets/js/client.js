@@ -132,6 +132,10 @@
     ajax(form.getAttribute('action'), 'POST', data.join('&'), function (err, res) {
       // @TODO: Handle response
       console.log(err, res);
+
+      if (!err) {
+        form.querySelector('textarea').value = '';
+      }
     });
 
     saveCredentials(username, email);
