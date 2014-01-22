@@ -11,6 +11,7 @@ var path     = require('path');
 var _        = require('lodash');
 var ws       = require('ws');
 var api      = require('./api');
+var md5      = require('md5');
 
 //
 // ## Setup Configuration
@@ -124,6 +125,7 @@ db.on('put', function (key, value) {
   var i = channel.length - 1;
   for (i; i >= 0; i--) {
     var client = channel[i];
+    value.email = md5(value.email);
     client.send(JSON.stringify(value));
   }
 });

@@ -9,9 +9,12 @@
 
 var API = module.exports = {};
 
-var fs      = require('fs');
-var path    = require('path');
-var jstream = require('JSONStream');
+var fs       = require('fs');
+var path     = require('path');
+var jstream  = require('JSONStream');
+var _        = require('lodash');
+var md5      = require('MD5');
+var comments = require('./lib/commentstream');
 
 //
 // ## JavaScript
@@ -89,7 +92,8 @@ API.get = function getComments(request, reply) {
   });
 
   var responseStream = jstream.stringify();
-  stream.pipe(responseStream);
+  var commentStream  = new comments();
+  stream.pipe(commentStream).pipe(responseStream);
 
   var response = reply(responseStream)
     .type('application/json');
