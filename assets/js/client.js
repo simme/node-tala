@@ -46,52 +46,58 @@
   //
   // Generate the form.
   //
-  // @TODO: Function for creating elements.
-  //
   function insertForm(element) {
-    var form = d.createElement('form');
-    form.setAttribute('action', conf('host', '') + '/comment');
-    form.setAttribute('class', 'comments-form');
-
-    var fields = [
-      { label: conf('nameField', 'Name'), name: 'username', type: 'text' },
-      { label: conf('emailField', 'Email'), name: 'email', type: 'email' },
-    ];
+    var form = createElement('form', {
+      action: conf('host', '') + '/comment',
+      class: 'comments-form'
+    });
 
     var credentials = getCredentials();
+    var fields = [
+      {
+        label: conf('nameField', 'Name'),
+        attributes: {
+          name: 'username',
+          type: 'text',
+          placeholder: conf('nameFieldPlaceholder', conf('nameField', '')),
+          value: credentials.username
+        }
+      },
+      {
+        label: conf('emailField', 'Email'),
+        attributes: {
+          name: 'email',
+          type: 'email',
+          placeholder: conf('emailFieldPlaceholder', conf('emailField', '')),
+          value: credentials.email
+        }
+      },
+    ];
+
 
     for (var i in fields) {
-      var fieldset = d.createElement('fieldset');
-      var label = d.createElement('label');
-      label.textContent = fields[i].label;
-      var field = d.createElement('input');
-      field.setAttribute('type', fields[i].type);
-      field.setAttribute('name', fields[i].name);
-      field.setAttribute('placeholder', fields[i].label);
-
-      if (credentials[fields[i].name]) {
-        field.setAttribute('value', credentials[fields[i].name]);
-      }
-
+      var fieldset = createElement('fieldset');
+      var label = createElement('label', {}, fields[i].label);
+      var field = createElement('input', fields[i].attributes);
       fieldset.appendChild(label);
       fieldset.appendChild(field);
-
       form.appendChild(fieldset);
     }
 
-    var comment = d.createElement('textarea');
-    comment.setAttribute('name', 'comment');
+    var comment = createElement('textarea', { 'name': 'comment' });
     form.appendChild(comment);
 
-    var hidden = d.createElement('input');
-    hidden.setAttribute('name', 'resource');
-    hidden.setAttribute('type', 'hidden');
-    hidden.setAttribute('value', element.getAttribute('data-id'));
+    var hidden = createElement('input', {
+      name: 'resource',
+      type: 'hidden',
+      value: element.getAttribute('data-id')
+    });
     form.appendChild(hidden);
 
-    var submit = d.createElement('input');
-    submit.setAttribute('type', 'submit');
-    submit.setAttribute('value', conf('submitButton', 'Post Comment'));
+    var submit = createElement('input', {
+      type: 'submit',
+      value: conf('submitButton', 'Post Comment')
+    });
     form.appendChild(submit);
 
     element.appendChild(form);
@@ -137,8 +143,7 @@
   // ## Load Comments
   //
   function loadComments(element, resource) {
-    var list = d.createElement('ol');
-    list.setAttribute('class', 'comments');
+    var list = createElement('ol', { class: 'comments' });
     element.appendChild(list);
 
     ajax(conf('host', '') + '/comments/' + resource, 'GET', function (err, res) {
@@ -158,20 +163,18 @@
   // ## Insert a comment
   //
   function insertComment(comment, element) {
-    var li = d.createElement('li');
+    var li = createElement('li');
 
-    var name = d.createElement('span');
-    name.textContent = comment.username;
+    var name = createElement('span', {}, comment.username);
     li.appendChild(name);
 
     var date = new Date(comment.timestamp);
-    var time = d.createElement('time');
-    time.setAttribute('datetime', date.toString());
-    time.textContent = date.toString();
+    var time = createElement('time', {
+      datetime: date.toString(),
+    }, date.toString());
     li.appendChild(time);
 
-    var text = d.createElement('div');
-    text.textContent = comment.comment;
+    var text = createElement('div', {}, comment.comment);
     li.appendChild(text);
 
     element.querySelector('ol').appendChild(li);
@@ -265,6 +268,19 @@
     }
 
     return credentials;
+  }
+
+  function createElement(tag, attributes, text) {
+    attributes = attributes || {};
+    text       = text || '';
+
+    var el = document.createElement(tag);
+    for (var i in attributes) {
+      el.setAttribute(i, attributes[i]);
+    }
+
+    el.textContent = text;
+    return el;
   }
 
   init();
