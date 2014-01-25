@@ -126,7 +126,7 @@ __cors__ option for the server.
 * **commentPostError**, text output on posting error.
 * **loadError**, text output on comment loading error.
 
-_More optoins and configurability will come with age!_
+_More options and configurability will come with age!_
 
 ## FAQ
 
