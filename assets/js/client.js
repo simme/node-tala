@@ -5,11 +5,14 @@
 //
 (function () {
   'use strict';
-
   var d = document;
 
-  var config = window.commentsConfig || {};
-  var store  = window.localStorage   || false;
+  var Tala = function () {
+    this.element = null;
+    this.config  = window.commentsConfig || {};
+    this.store   = window.localStorage   || false;
+    this.init();
+  };
 
   //
   // ## Init
@@ -18,62 +21,56 @@
   //
   // @TODO: Validate data-id exists
   //
-  function init() {
-    var element = d.querySelector('.comments-wrapper');
-    if (!element) {
+  Tala.prototype.init = function init() {
+    this.element = d.querySelector('.comments-wrapper');
+    if (!this.element) {
       if (console && console.log) console.log('No comment wrapper found. Aborting.');
       return;
     }
 
-    var resource = element.getAttribute('data-id');
+    var resource = this.element.getAttribute('data-id');
     if (!resource) {
       if (console && console.log) console.log('Comment wrapper missing data-id attribute. Aborting.');
       return;
     }
 
-    // Create form
-    insertForm(element);
-
-    // Start loading comments
-    loadComments(element, resource);
-
-    // Setup WebSocket
-    setupSocket(element, resource);
-  }
+    this.insertForm();
+    this.loadComments(resource);
+    this.setupSocket(resource);
+  };
 
   //
   // ## Insert Form
   //
   // Generate the form.
   //
-  function insertForm(element) {
+  Tala.prototype.insertForm = function insertForm() {
     var form = createElement('form', {
-      action: conf('host', '') + '/comment',
+      action: this.conf('host', '') + '/comment',
       class: 'comments-form'
     });
 
-    var credentials = getCredentials();
+    var credentials = this.getCredentials();
     var fields = [
       {
-        label: conf('nameField', 'Name'),
+        label:this.conf('nameField', 'Name'),
         attributes: {
           name: 'username',
           type: 'text',
-          placeholder: conf('nameFieldPlaceholder', conf('nameField', '')),
+          placeholder:this.conf('nameFieldPlaceholder', this.conf('nameField', '')),
           value: credentials.username
         }
       },
       {
-        label: conf('emailField', 'Email'),
+        label:this.conf('emailField', 'Email'),
         attributes: {
           name: 'email',
           type: 'email',
-          placeholder: conf('emailFieldPlaceholder', conf('emailField', '')),
+          placeholder:this.conf('emailFieldPlaceholder', this.conf('emailField', '')),
           value: credentials.email
         }
       },
     ];
-
 
     for (var i in fields) {
       var fieldset = createElement('fieldset');
@@ -90,30 +87,30 @@
     var hidden = createElement('input', {
       name: 'resource',
       type: 'hidden',
-      value: element.getAttribute('data-id')
+      value: this.element.getAttribute('data-id')
     });
     form.appendChild(hidden);
 
     var submit = createElement('input', {
       type: 'submit',
-      value: conf('submitButton', 'Post Comment')
+      value:this.conf('submitButton', 'Post Comment')
     });
     form.appendChild(submit);
 
-    element.appendChild(form);
-    listen(form, 'submit', postComment);
-  }
+    this.element.appendChild(form);
+    var self = this;
+    listen(form, 'submit', function (event) {
+      self.postComment(event, this);
+    });
+  };
 
   //
   // ## Post Comment
   //
   // @TODO: Validate email.
   //
-  function postComment(event) {
+  Tala.prototype.postComment = function postComment(event, form) {
     event.preventDefault();
-
-    /* jshint validthis: true */
-    var form = this;
 
     // @TODO: make this prettier
     var fields = ['username', 'email', 'comment', 'resource'];
@@ -138,19 +135,20 @@
       }
     });
 
-    saveCredentials(username, email);
+    this.saveCredentials(username, email);
 
     return false;
-  }
+  };
 
   //
   // ## Load Comments
   //
-  function loadComments(element, resource) {
+  Tala.prototype.loadComments = function loadComments(resource) {
     var list = createElement('ol', { class: 'comments' });
-    element.appendChild(list);
+    this.element.appendChild(list);
 
-    ajax(conf('host', '') + '/comments/' + resource, 'GET', function (err, res) {
+    var self = this;
+    ajax(this.conf('host', '') + '/comments/' + resource, 'GET', function (err, res) {
       // @TODO: Handle error
       if (err) {
         console.log(err);
@@ -158,15 +156,15 @@
       }
 
       for (var i in res) {
-        insertComment(res[i].value, element);
+        self.insertComment(res[i].value, self.element);
       }
     });
-  }
+  };
 
   //
   // ## Insert a comment
   //
-  function insertComment(comment, element) {
+  Tala.prototype.insertComment = function insertComment(comment, element) {
     var li = createElement('li');
 
     var name = createElement('span', {}, comment.username);
@@ -182,14 +180,66 @@
     li.appendChild(text);
 
     element.querySelector('ol').appendChild(li);
-  }
+  };
 
   //
-  // ## Get Config
+  // ## Getthis.config
   //
-  function conf(key, def) {
-    return config[key] || def;
-  }
+  Tala.prototype.conf = function conf(key, def) {
+    return this.config[key] || def;
+  };
+
+  //
+  // ## WebSockets!
+  //
+  Tala.prototype.setupSocket = function setupSocket(resource) {
+    if (!window.WebSocket) {
+      return;
+    }
+
+    var host = this.conf('host', window.document.location.host).replace(/^https?:\/\//, '');
+    var ws = new WebSocket('ws://' + host);
+    var self = this;
+    ws.onmessage = function (msg) {
+      var comment = JSON.parse(msg.data);
+      self.insertComment(comment, self.element);
+    };
+
+    ws.onopen = function () {
+      ws.send(JSON.stringify({
+        'subscribe': resource
+      }));
+    };
+  };
+
+  //
+  // ## Save Credentials
+  //
+  Tala.prototype.saveCredentials = function saveCredentials(name, email) {
+    if (!this.store) return;
+    this.store.setItem('comments:user', JSON.stringify({
+      username: name,
+      email: email
+    }));
+  };
+
+  //
+  // ## Get Credentials
+  //
+  Tala.prototype.getCredentials = function getCredentials() {
+    if (!this.store) return;
+    var credentials = this.store.getItem('comments:user');
+    if (credentials) {
+      credentials = JSON.parse(credentials);
+    }
+    else {
+      credentials = { username: '', email: ''};
+    }
+
+    return credentials;
+  };
+
+  //-------------------------------------------------------------------------
 
   //
   // ## Attach Event Handler
@@ -228,52 +278,6 @@
     req.send(data);
   }
 
-  //
-  // ## WebSockets!
-  //
-  function setupSocket(element, resource) {
-    if (!window.WebSocket) {
-      return;
-    }
-
-    var host = conf('host', window.document.location.host).replace(/^https?:\/\//, '');
-    var ws = new WebSocket('ws://' + host);
-    ws.onmessage = function (msg) {
-      var comment = JSON.parse(msg.data);
-      insertComment(comment, element);
-    };
-
-    ws.onopen = function () {
-      ws.send(JSON.stringify({
-        'subscribe': resource
-      }));
-    };
-  }
-
-  //
-  // ## Save Credentials
-  //
-  function saveCredentials(name, email) {
-    if (!store) return;
-    store.setItem('comments:user', JSON.stringify({
-      username: name,
-      email: email
-    }));
-  }
-
-  function getCredentials() {
-    if (!store) return;
-    var credentials = store.getItem('comments:user');
-    if (credentials) {
-      credentials = JSON.parse(credentials);
-    }
-    else {
-      credentials = { username: '', email: ''};
-    }
-
-    return credentials;
-  }
-
   function createElement(tag, attributes, text) {
     attributes = attributes || {};
     text       = text || '';
@@ -287,6 +291,6 @@
     return el;
   }
 
-  init();
+  new Tala();
 }());
 
