@@ -53,6 +53,7 @@ function startServer() {
       method: 'GET',
       handler: api.js,
     },
+    // @FIXME: Validate payload.
     {
       path: '/comment',
       method: 'POST',
