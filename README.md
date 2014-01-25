@@ -128,6 +128,22 @@ __cors__ option for the server.
 
 _More options and configurability will come with age!_
 
+## Compatibility, security etc.
+
+This project is _very_ new and not well tested yet. It should, at least in
+theory, work in IE8+ and all the good browsers.
+
+As for security not much has been done. It's currently possible to post to the
+server using any HTTP client available. Which can be done to fill up your
+server or whatever. There's spam protection from Akismet which should alleviate
+the problem a bit, but not completely.
+
+If you have any ideas on how to improve this specific part of _Tala_ I'm all
+ears.
+
+With this said, I'm labeling it 1.0 because I want to. Also, I'm leaving no
+guarantees or anything! :)
+
 ## FAQ
 
 * **Where does the name come from?**
