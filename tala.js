@@ -53,13 +53,13 @@ function startServer() {
     cors: cors
   });
 
+  var joi = hapi.types;
   server.route([
     {
       path: '/js',
       method: 'GET',
       handler: api.js,
     },
-    // @FIXME: Validate payload.
     {
       path: '/comment',
       method: 'POST',
@@ -68,6 +68,15 @@ function startServer() {
         payload: {
           output: 'data',
           parse: true
+        },
+        validate: {
+          // @TODO: Make comment length configurable?
+          payload: {
+            username: joi.string().min(1).max(32),
+            email: joi.string().email(),
+            comment: joi.string().min(1).max(1024*3),
+            resource: joi.string().min(1)
+          }
         }
       }
     },
