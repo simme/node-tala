@@ -131,12 +131,17 @@
       if (key === 'email') email = val;
     }
 
+    var self = this;
     ajax(form.getAttribute('action'), 'POST', data.join('&'), function (err, res) {
-      // @TODO: Handle response
-      //console.log(err, res);
-
+      var ta = form.querySelector('textarea');
       if (!err) {
-        form.querySelector('textarea').value = '';
+        ta.value = '';
+      }
+      else {
+        var error = createElement('p', {
+          class: 'comment-error'
+        }, self.conf('commentPostError', 'Failed to post comment'));
+        form.insertBefore(error, ta);
       }
     });
 
