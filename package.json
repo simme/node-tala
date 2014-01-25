@@ -4,6 +4,7 @@
   "description": "Self hosted commenting platform for node.",
   "main": "tala.js",
   "scripts": {
+    "start": "node tala.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
