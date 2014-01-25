@@ -16,6 +16,7 @@ var _        = require('lodash');
 var md5      = require('MD5');
 var comments = require('./lib/commentstream');
 var xss      = require('./lib/xss');
+var uglify   = require('uglify-js2');
 
 //
 // ## JavaScript
@@ -28,8 +29,15 @@ API.js = function js(request, reply) {
   var assetPath = path.join(__dirname, 'assets', 'js');
   var files = [
     'client.js'
-  ];
+  ].map(function (item) {
+    return path.join(assetPath, item);
+  });
 
+  var minified = uglify.minify(files);
+  reply(minified.code)
+    .type('text/javascript');
+
+  /*
   var data = [];
   function loadFile(file, cb) {
     if (!file) {
@@ -52,6 +60,7 @@ API.js = function js(request, reply) {
     reply(data.join('\n'))
       .type('text/javascript');
   });
+  */
 };
 
 //

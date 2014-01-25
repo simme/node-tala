@@ -59,6 +59,12 @@ function startServer() {
       path: '/js',
       method: 'GET',
       handler: api.js,
+      config: {
+        cache: {
+          privacy: 'public',
+          expiresIn: 24 * 3600 * 1000
+        }
+      }
     },
     {
       path: '/comment',
