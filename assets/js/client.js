@@ -16,6 +16,9 @@
     this.retries = 0;
     this.nextTry = 1000;
 
+    // DOM elements
+    this.dom = {};
+
     this.init();
   };
 
@@ -157,11 +160,22 @@
     var list = createElement('ol', { class: 'comments' });
     this.element.appendChild(list);
 
+    if (this.dom.loadError) {
+      this.element.removeChild(this.dom.loadError);
+    }
+
     var self = this;
     ajax(this.conf('host', '') + '/comments/' + resource, 'GET', function (err, res) {
-      // @TODO: Handle error
       if (err) {
-        console.log(err);
+        var error = createElement('p', {
+          class: 'comment-error'
+        }, self.conf('loadError', 'Failed to load comments. Click to try again'));
+        self.element.insertBefore(error, list);
+        self.dom.loadError = error;
+
+        listen(error, 'click', function (event) {
+          self.loadComments();
+        });
         return;
       }
 
