@@ -19,7 +19,8 @@ var sm       = require('./lib/socket');
 //
 var defaults = {
   port: 3000,
-  db: path.join(__dirname, 'db')
+  db: path.join(__dirname, 'db'),
+  cors: false
 };
 
 var config = {};
@@ -37,16 +38,19 @@ var db = levelup(config.db, { valueEncoding: 'json' }, startServer);
 //
 // ## Configure Hapi
 //
-// @TODO: Configure CORS
-//
 function startServer() {
+  // Read CORS config
+  var domains = config.domains || false;
+  var cors    = domains ? { origin: domains } : false;
+
+  // Create server
   var server = new hapi.Server(defaults.port, {
     app: {
       db: function () {
         return db;
       }
     },
-    cors: true
+    cors: cors
   });
 
   server.route([

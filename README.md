@@ -29,3 +29,7 @@ honor and glory!
 
 There's is currently **no security checks what so ever**. FYI.
 
+## Config
+
+* **cors**, array of domains that may use the server.
+
