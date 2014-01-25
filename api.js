@@ -65,7 +65,7 @@ API.post = function postComment(request, reply) {
   var namespace = data.resource;
   delete(data.namespace);
 
-  var keys = Object.keys(data);
+  var keys = ['email', 'comment', 'resource'];
   function protectXSS(_key, done) {
     if (typeof data[_key] !== 'string') {
       _key = keys.shift();
@@ -77,16 +77,28 @@ API.post = function postComment(request, reply) {
     }
 
     xss(data[_key], {}, function (err, value) {
-      // @FIXME: Handle err..
+      if (err) {
+        done(err);
+        return;
+      }
+
       data[_key] = value;
       protectXSS(keys.shift(), done);
     });
   }
 
-  function doneFiltering() {
+  function doneFiltering(err) {
+    if (err) {
+      var response = reply({
+        success: false,
+        message: 'Content filter failed.'
+      });
+      response.code(500);
+      return;
+    }
+
     var key = [namespace, data.timestamp].join('~');
     var db = request.server.settings.app.db();
-    console.log('saving', data, key);
     db.put(key, data, {}, function (err) {
       var response = reply({
         success: !!!err,
@@ -105,7 +117,6 @@ API.post = function postComment(request, reply) {
 // Get comments for the specified resource.
 //
 // @TODO: Might need pagination.
-// @TODO: Hide user emails.
 //
 API.get = function getComments(request, reply) {
   var key = request.params.resource;
