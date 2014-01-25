@@ -15,6 +15,7 @@ var jstream  = require('JSONStream');
 var _        = require('lodash');
 var md5      = require('MD5');
 var comments = require('./lib/commentstream');
+var xss      = require('./lib/xss');
 
 //
 // ## JavaScript
@@ -64,15 +65,38 @@ API.post = function postComment(request, reply) {
   var namespace = data.resource;
   delete(data.namespace);
 
-  var key = [namespace, data.timestamp].join('~');
-  var db = request.server.settings.app.db();
-  db.put(key, data, {}, function (err) {
-    var response = reply({
-      success: !!!err,
-      message: err ? err.message : 'comment saved'
+  var keys = Object.keys(data);
+  function protectXSS(_key, done) {
+    if (typeof data[_key] !== 'string') {
+      _key = keys.shift();
+    }
+
+    if (!_key) {
+      done();
+      return;
+    }
+
+    xss(data[_key], {}, function (err, value) {
+      // @FIXME: Handle err..
+      data[_key] = value;
+      protectXSS(keys.shift(), done);
     });
-    response.code(!!!err ? 200 : 500);
-  });
+  }
+
+  function doneFiltering() {
+    var key = [namespace, data.timestamp].join('~');
+    var db = request.server.settings.app.db();
+    console.log('saving', data, key);
+    db.put(key, data, {}, function (err) {
+      var response = reply({
+        success: !!!err,
+        message: err ? err.message : 'comment saved'
+      });
+      response.code(!!!err ? 200 : 500);
+    });
+  }
+
+  protectXSS(keys.shift(), doneFiltering);
 };
 
 //
