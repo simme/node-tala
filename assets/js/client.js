@@ -9,7 +9,7 @@
 
   var Tala = function () {
     this.element = null;
-    this.config  = window.commentsConfig || {};
+    this.config  = window.talaConfig     || {};
     this.store   = window.localStorage   || false;
 
     // Socket related state
