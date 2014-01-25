@@ -11,6 +11,11 @@
     this.element = null;
     this.config  = window.commentsConfig || {};
     this.store   = window.localStorage   || false;
+
+    // Socket related state
+    this.retries = 0;
+    this.nextTry = 1000;
+
     this.init();
   };
 
@@ -206,9 +211,21 @@
     };
 
     ws.onopen = function () {
+      self.retries = 0;
+      self.nextTry = 1000;
       ws.send(JSON.stringify({
         'subscribe': resource
       }));
+    };
+
+    // Try to reconnect if socket is closed.
+    ws.onclose = function () {
+      self.retries++;
+      if (self.retries > 8) return;
+      setTimeout(function () {
+        self.nextTry *= 2;
+        self.setupSocket();
+      }, self.nextTry);
     };
   };
 
