@@ -65,7 +65,7 @@ API.post = function postComment(request, reply) {
   var namespace = data.resource;
   delete(data.namespace);
 
-  var keys = ['email', 'comment', 'resource'];
+  var keys = ['username', 'email', 'comment', 'resource'];
   function protectXSS(_key, done) {
     if (typeof data[_key] !== 'string') {
       _key = keys.shift();

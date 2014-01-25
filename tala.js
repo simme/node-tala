@@ -78,8 +78,30 @@ function startServer() {
     }
   ]);
 
-  server.start(function () {
-    console.log('Server listening on port: ', config.port);
+  // Register plugins
+  var plugins = ['spam'];
+  function registerPlugin(plugin, done) {
+    if (!plugin) {
+      done();
+      return;
+    }
+
+    var module = require('./lib/' + plugin);
+    var plug   = {
+      name: plugin,
+      version: '1.0.0',
+      register: module.register
+    };
+    server.pack.register(plug, config[plugin] || {}, function () {
+      var next = plugins.shift();
+      registerPlugin(next, done);
+    });
+  }
+
+  registerPlugin(plugins.shift(), function () {
+    server.start(function () {
+      console.log('Server listening on port: ', config.port);
+    });
   });
 
   var socketManager = new sm(server.listener, db);
