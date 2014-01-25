@@ -12,6 +12,7 @@ var _        = require('lodash');
 var ws       = require('ws');
 var api      = require('./api');
 var md5      = require('md5');
+var sm       = require('./lib/socket');
 
 //
 // ## Setup Configuration
@@ -44,7 +45,8 @@ function startServer() {
       db: function () {
         return db;
       }
-    }
+    },
+    cors: true
   });
 
   server.route([
@@ -76,58 +78,6 @@ function startServer() {
     console.log('Server listening on port: ', config.port);
   });
 
-  var socket = new ws.Server({ server: server.listener });
-
-  socket.on('connection', function (socket) {
-    socket.on('message', function (msg) {
-      var obj = JSON.parse(msg);
-      if (obj.subscribe) {
-        socket.__channel = obj.subscribe;
-        subscribe(obj.subscribe, socket);
-      }
-    });
-
-    socket.on('close', function () {
-      unsubscribe(socket.__channel, socket);
-    });
-  });
+  var socketManager = new sm(server.listener, db);
 }
-
-//
-// ## Socket API
-//
-// @TODO: Wrap up in container "class".
-//
-var channels = {};
-function subscribe(channel, client) {
-  if (!channels[channel]) {
-    channels[channel] = [];
-  }
-
-  channels[channel].push(client);
-}
-
-// @TODO: Make sure this works with lots of connections...
-function unsubscribe(channel, client) {
-  if (channels[channel]) {
-    for (var i in channels[channel]) {
-      if (channels[channel][i] === client) {
-        channels[channel].splice(i, 1);
-      }
-    }
-  }
-}
-
-db.on('put', function (key, value) {
-  var channel = channels[key.split('~')[0]];
-  if (!channel) return;
-
-  // @TODO: Filter emails
-  var i = channel.length - 1;
-  for (i; i >= 0; i--) {
-    var client = channel[i];
-    value.email = md5(value.email);
-    client.send(JSON.stringify(value));
-  }
-});
 
