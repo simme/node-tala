@@ -44,7 +44,7 @@ function startServer() {
   var cors    = domains ? { origin: domains } : false;
 
   // Create server
-  var server = new hapi.Server(defaults.port, {
+  var server = new hapi.Server(config.port, {
     app: {
       db: function () {
         return db;
