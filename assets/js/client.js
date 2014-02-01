@@ -109,6 +109,7 @@
     var self = this;
     listen(form, 'submit', function (event) {
       self.postComment(event, this);
+      submit.setAttribute('disabled', 'disabled');
     });
   };
 
@@ -139,6 +140,8 @@
       var ta = form.querySelector('textarea');
       if (!err) {
         ta.value = '';
+        var submit = form.querySelectorAll('[type="submit"]');
+        submit[0].removeAttribute('disabled');
       }
       else {
         var error = createElement('p', {
