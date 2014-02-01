@@ -25,7 +25,7 @@ var defaults = {
 
 var config = {};
 try {
-  config = require('./config.json');
+  config = require(path.join(__dirname, 'config.json'));
 } catch (err) {}
 
 config = _.defaults(config, defaults);
