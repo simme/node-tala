@@ -11,7 +11,6 @@ var path     = require('path');
 var _        = require('lodash');
 var ws       = require('ws');
 var api      = require('./api');
-var md5      = require('md5');
 var sm       = require('./lib/socket');
 
 //
