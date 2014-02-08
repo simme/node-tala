@@ -138,6 +138,8 @@ server using any HTTP client available. Which can be done to fill up your
 server or whatever. There's spam protection from Akismet which should alleviate
 the problem a bit, but not completely.
 
+There is also rudimentary XSS protection.
+
 If you have any ideas on how to improve this specific part of _Tala_ I'm all
 ears.
 
