@@ -207,7 +207,7 @@
     var date = new Date(comment.timestamp);
     var time = createElement('time', {
       datetime: date.toString(),
-    }, date.toString());
+    }, [date.getDate(), date.getMonth() + 1, date.getFullYear()].join('-') + ' ' + date.getHours() + ':' + date.getMinutes());
     li.appendChild(time);
 
     var text = createElement('div', {}, comment.comment);
