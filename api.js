@@ -33,11 +33,10 @@ API.js = function js(request, reply) {
     return path.join(assetPath, item);
   });
 
-  var minified = uglify.minify(files);
-  reply(minified.code)
-    .type('text/javascript');
+  //var minified = uglify.minify(files);
+  //reply(minified.code)
+  //  .type('text/javascript');
 
-  /*
   var data = [];
   function loadFile(file, cb) {
     if (!file) {
@@ -45,7 +44,7 @@ API.js = function js(request, reply) {
       return;
     }
 
-    fs.readFile(path.join(assetPath, file), 'utf8', function (err, txt) {
+    fs.readFile(file, 'utf8', function (err, txt) {
       if (err) {
         cb(err);
         return;
@@ -60,7 +59,7 @@ API.js = function js(request, reply) {
     reply(data.join('\n'))
       .type('text/javascript');
   });
-  */
+  //*/
 };
 
 //
@@ -117,16 +116,18 @@ API.post = function postComment(request, reply) {
 
 
       if (response.statusCode === 200) {
-        request.server.plugins.mail.send(
-          'New comment!',
-          [
-            'A new comment has been posted on your blog!',
-            'The comment was posted by: ' + data.username,
-            'The users email is: ' + data.email,
-            'Contents of the comment were: ' + data.comment,
-            'The message can be viewd at: ' + data.url
-          ].join('\n')
-        );
+        if (request.server.plugins.mail) {
+          request.server.plugins.mail.send(
+            'New comment!',
+            [
+              'A new comment has been posted on your blog!',
+              'The comment was posted by: ' + data.username,
+              'The users email is: ' + data.email,
+              'Contents of the comment were: ' + data.comment,
+              'The message can be viewd at: ' + data.url
+            ].join('\n')
+          );
+        }
       }
     });
   }
