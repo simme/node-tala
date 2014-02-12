@@ -19,7 +19,8 @@ var sm       = require('./lib/socket');
 var defaults = {
   port: 3000,
   db: path.join(__dirname, 'db'),
-  cors: false
+  cors: false,
+  mail: false
 };
 
 var config = {};
@@ -80,7 +81,8 @@ function startServer() {
             username: joi.string().min(1).max(32),
             email: joi.string().email(),
             comment: joi.string().min(1).max(1024*3),
-            resource: joi.string().min(1)
+            resource: joi.string().min(1),
+            url: joi.string() // @FIXME: Validate URL
           }
         }
       }
@@ -94,6 +96,9 @@ function startServer() {
 
   // Register plugins
   var plugins = ['spam'];
+  if (config.mail) {
+    plugins.push('mail');
+  }
   function registerPlugin(plugin, done) {
     if (!plugin) {
       done();

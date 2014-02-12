@@ -99,6 +99,13 @@
     });
     form.appendChild(hidden);
 
+    var hidden2 = createElement('input', {
+      name: 'url',
+      type: 'hidden',
+      value: document.URL
+    });
+    form.appendChild(hidden2);
+
     var submit = createElement('input', {
       type: 'submit',
       value:this.conf('submitButton', 'Post Comment')
@@ -122,7 +129,7 @@
     event.preventDefault();
 
     // @TODO: make this prettier
-    var fields = ['username', 'email', 'comment', 'resource'];
+    var fields = ['username', 'email', 'comment', 'resource', 'url'];
     var username = '';
     var email = '';
     var data = [];

@@ -74,7 +74,7 @@ API.post = function postComment(request, reply) {
   var namespace = data.resource;
   delete(data.namespace);
 
-  var keys = ['username', 'email', 'comment', 'resource'];
+  var keys = ['username', 'email', 'comment', 'resource', 'url'];
   function protectXSS(_key, done) {
     if (typeof data[_key] !== 'string') {
       _key = keys.shift();
@@ -114,6 +114,20 @@ API.post = function postComment(request, reply) {
         message: err ? err.message : 'comment saved'
       });
       response.code(!!!err ? 200 : 500);
+
+
+      if (response.statusCode === 200) {
+        request.server.plugins.mail.send(
+          'New comment!',
+          [
+            'A new comment has been posted on your blog!',
+            'The comment was posted by: ' + data.username,
+            'The users email is: ' + data.email,
+            'Contents of the comment were: ' + data.comment,
+            'The message can be viewd at: ' + data.url
+          ].join('\n')
+        );
+      }
     });
   }
 

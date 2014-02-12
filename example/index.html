@@ -6,7 +6,7 @@
 
     function downloadJSAtOnload() {
       var element = document.createElement("script");
-      element.src = "http://localhost:3000/js";
+      element.src = "http://localhost:3000/js?_=" + Date.now();
       document.body.appendChild(element);
     }
 
