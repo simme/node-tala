@@ -151,6 +151,10 @@ API.get = function getComments(request, reply) {
   });
 
   var responseStream = jstream.stringify();
+  // @FIXME: This is a work around for a bug (?) in Hapi.
+  // https://github.com/hapijs/hapi/issues/2368
+  // Or in JSONStream...
+  responseStream._readableState = {};
   var commentStream  = new comments();
   stream.pipe(commentStream).pipe(responseStream);
 
