@@ -15,16 +15,17 @@
   "author": "Simon Ljungberg <hi@iamsim.me>",
   "license": "MIT",
   "dependencies": {
-    "levelup": "~0.18.2",
-    "hapi": "~2.0.0",
-    "leveldown": "~0.10.2",
-    "lodash": "~2.4.1",
     "JSONStream": "~0.7.1",
-    "ws": "~0.4.31",
-    "jsdom": "~0.8.11",
     "MD5": "~1.2.0",
     "akismet": "0.0.10",
-    "nodemailer": "~0.6.0"
+    "hapi": "~8.0.0",
+    "joi": "^6.3.0",
+    "jsdom": "~0.8.11",
+    "leveldown": "~0.10.2",
+    "levelup": "~0.18.2",
+    "lodash": "~2.4.1",
+    "nodemailer": "~0.6.0",
     "uglifyjs": "^2.4.10",
+    "ws": "~0.4.31"
   }
 }

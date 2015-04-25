@@ -12,6 +12,7 @@ var _        = require('lodash');
 var ws       = require('ws');
 var api      = require('./api');
 var sm       = require('./lib/socket');
+var joi      = require('joi');
 
 //
 // ## Setup Configuration
@@ -20,7 +21,8 @@ var defaults = {
   port: 3000,
   db: path.join(__dirname, 'db'),
   cors: false,
-  mail: false
+  mail: false,
+  domains: ['*']
 };
 
 var config = {};
@@ -41,19 +43,18 @@ var db = levelup(config.db, { valueEncoding: 'json' }, startServer);
 function startServer() {
   // Read CORS config
   var domains = config.domains || false;
-  var cors    = domains ? { origin: domains } : false;
+  var cors    = domains ? { origin: config.domains } : true;
 
   // Create server
-  var server = new hapi.Server(config.port, {
+  var server = new hapi.Server({
     app: {
       db: function () {
         return db;
       }
-    },
-    cors: cors
+    }
   });
+  server.connection({ port: config.port });
 
-  var joi = hapi.types;
   server.route([
     {
       path: '/js',
@@ -62,8 +63,9 @@ function startServer() {
       config: {
         cache: {
           privacy: 'public',
-          expiresIn: 24 * 3600 * 1000
-        }
+          //expiresIn: 24 * 3600 * 1000
+        },
+        cors: true
       }
     },
     {
@@ -71,6 +73,7 @@ function startServer() {
       method: 'POST',
       handler: api.post,
       config: {
+        cors: true,
         payload: {
           output: 'data',
           parse: true
@@ -91,6 +94,9 @@ function startServer() {
       path: '/comments/{resource}',
       method: 'GET',
       handler: api.get,
+      config: {
+        cors: { origin: ['*'] }
+      }
     }
   ]);
 
@@ -111,7 +117,7 @@ function startServer() {
       version: '1.0.0',
       register: module.register
     };
-    server.pack.register(plug, config[plugin] || {}, function () {
+    server.register(plug, config[plugin] || {}, function () {
       var next = plugins.shift();
       registerPlugin(next, done);
     });
@@ -119,10 +125,9 @@ function startServer() {
 
   registerPlugin(plugins.shift(), function () {
     server.start(function () {
-      console.log('Server listening on port: ', config.port);
+      console.log('Server started on: %s', server.info.uri);
     });
   });
 
   var socketManager = new sm(server.listener, db);
 }
-
