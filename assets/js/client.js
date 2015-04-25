@@ -314,7 +314,12 @@
         fn(null, JSON.parse(this.responseText), this);
       }
       else if (this.readyState === 4 && this.status !== 200) {
-        fn(JSON.parse(this.responseText), null, this);
+        try {
+          fn(JSON.parse(this.responseText), null, this);
+        } catch (err) {
+          // @TODO: Handle this error.
+          console.log(err);
+        }
       }
     };
     req.open(method, host);
