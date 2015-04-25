@@ -96,14 +96,14 @@ API.post = function postComment(request, reply) {
   }
 
   function doneFiltering(err) {
-    if (err) {
-      var response = reply({
-        success: false,
-        message: 'Content filter failed.'
-      });
-      response.code(500);
-      return;
-    }
+    //if (err) {
+    //  var response = reply({
+    //    success: false,
+    //    message: 'Content filter failed.'
+    //  });
+    //  response.code(500);
+    //  return;
+    //}
 
     var key = [namespace, data.timestamp].join('~');
     var db = request.server.settings.app.db();

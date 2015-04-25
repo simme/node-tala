@@ -1,6 +1,6 @@
 {
   "name": "tala",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Self hosted commenting platform for node.",
   "main": "tala.js",
   "homepage": "https://github.com/simme/node-tala",
