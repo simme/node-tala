@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Self hosted commenting platform for node.",
   "main": "tala.js",
+  "homepage": "https://github.com/simme/node-tala",
   "scripts": {
     "start": "node tala.js",
     "test": "echo \"Error: no test specified\" && exit 1"
