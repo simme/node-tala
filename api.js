@@ -16,7 +16,7 @@ var _        = require('lodash');
 var md5      = require('MD5');
 var comments = require('./lib/commentstream');
 var xss      = require('./lib/xss');
-var uglify   = require('uglify-js2');
+var uglify   = require('uglifyjs');
 
 //
 // ## JavaScript
