@@ -175,7 +175,7 @@
     }
 
     var self = this;
-    ajax(this.conf('host', '') + '/comments/' + resource, 'GET', function (err, res) {
+    ajax(this.conf('host', '') + '/comments/' + encodeURIComponent(resource), 'GET', function (err, res) {
       if (err) {
         var error = createElement('p', {
           class: 'comment-error'
