@@ -15,7 +15,7 @@
   "author": "Simon Ljungberg <hi@iamsim.me>",
   "license": "MIT",
   "dependencies": {
-    "JSONStream": "~0.7.1",
+    "JSONStream": "~0.10.0",
     "MD5": "~1.2.0",
     "akismet": "0.0.10",
     "hapi": "~8.0.0",
