@@ -3,6 +3,8 @@
 //
 // Renders the comment form and handles posting/fetching etc.
 //
+/* jshint browser: true */
+/* globals console */
 (function () {
   'use strict';
   var d = document;
@@ -32,13 +34,13 @@
   Tala.prototype.init = function init() {
     this.element = d.querySelector('.comments-wrapper');
     if (!this.element) {
-      if (console && console.log) console.log('No comment wrapper found. Aborting.');
+      if (console && console.log) { console.log('No comment wrapper found. Aborting.'); }
       return;
     }
 
     var resource = this.element.getAttribute('data-id');
     if (!resource) {
-      if (console && console.log) console.log('Comment wrapper missing data-id attribute. Aborting.');
+      if (console && console.log) { console.log('Comment wrapper missing data-id attribute. Aborting.'); }
       return;
     }
 
@@ -143,17 +145,17 @@
       var val = form.querySelector('[name="' + key + '"]').value;
       data.push([key, val].map(encodeURIComponent).join('='));
 
-      if (key === 'username') username = val;
-      if (key === 'email') email = val;
+      if (key === 'username') { username = val; }
+      if (key === 'email') { email = val; }
     }
 
     var self = this;
-    ajax(form.getAttribute('action'), 'POST', data.join('&'), function (err, res) {
+    ajax(form.getAttribute('action'), 'POST', data.join('&'), function (err) {
       var ta = form.querySelector('textarea');
+      var submit = form.querySelectorAll('[type="submit"]');
+      submit[0].removeAttribute('disabled');
       if (!err) {
         ta.value = '';
-        var submit = form.querySelectorAll('[type="submit"]');
-        submit[0].removeAttribute('disabled');
       }
       else {
         var error = createElement('p', {
@@ -188,7 +190,7 @@
         self.element.insertBefore(error, list);
         self.dom.loadError = error;
 
-        listen(error, 'click', function (event) {
+        listen(error, 'click', function () {
           self.loadComments();
         });
         return;
@@ -259,7 +261,7 @@
     // Try to reconnect if socket is closed.
     ws.onclose = function () {
       self.retries++;
-      if (self.retries > 8) return;
+      if (self.retries > 8) { return; }
       setTimeout(function () {
         self.nextTry *= 2;
         self.setupSocket();
@@ -271,7 +273,7 @@
   // ## Save Credentials
   //
   Tala.prototype.saveCredentials = function saveCredentials(name, email) {
-    if (!this.store) return;
+    if (!this.store) { return; }
     this.store.setItem('comments:user', JSON.stringify({
       username: name,
       email: email
@@ -282,7 +284,7 @@
   // ## Get Credentials
   //
   Tala.prototype.getCredentials = function getCredentials() {
-    if (!this.store) return;
+    if (!this.store) { return; }
     var credentials = this.store.getItem('comments:user');
     if (credentials) {
       credentials = JSON.parse(credentials);
@@ -351,6 +353,7 @@
     return el;
   }
 
+  /* jshint nonew: false */
   new Tala();
 }());
 
