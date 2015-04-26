@@ -83,13 +83,17 @@
     for (var i in fields) {
       var fieldset = createElement('fieldset');
       var label = createElement('label', {}, fields[i].label);
+      label.classList.add('comments-input-label');
       var field = createElement('input', fields[i].attributes);
+      field.classList.add('comments-input');
       fieldset.appendChild(label);
       fieldset.appendChild(field);
+      fieldset.classList.add('comments-field-wrapper');
       form.appendChild(fieldset);
     }
 
     var comment = createElement('textarea', { 'name': 'comment' });
+    comment.classList.add('comment-content');
     form.appendChild(comment);
 
     var hidden = createElement('input', {
@@ -110,6 +114,7 @@
       type: 'submit',
       value:this.conf('submitButton', 'Post Comment')
     });
+    submit.classList.add('comment-submit');
     form.appendChild(submit);
 
     this.element.appendChild(form);
@@ -167,7 +172,7 @@
   // ## Load Comments
   //
   Tala.prototype.loadComments = function loadComments(resource) {
-    var list = createElement('ol', { class: 'comments' });
+    var list = createElement('ol', { class: 'comments-list' });
     this.element.appendChild(list);
 
     if (this.dom.loadError) {
@@ -200,17 +205,21 @@
   //
   Tala.prototype.insertComment = function insertComment(comment, element) {
     var li = createElement('li');
+    li.classList.add('comment-wrapper');
 
     var name = createElement('span', {}, comment.username);
+    name.classList.add('comment-author');
     li.appendChild(name);
 
     var date = new Date(comment.timestamp);
     var time = createElement('time', {
       datetime: date.toString(),
     }, [date.getDate(), date.getMonth() + 1, date.getFullYear()].join('-') + ' ' + date.getHours() + ':' + date.getMinutes());
+    time.classList.add('comment-post-date');
     li.appendChild(time);
 
     var text = createElement('div', {}, comment.comment);
+    text.classList.add('comment-body');
     li.appendChild(text);
 
     element.querySelector('ol').appendChild(li);
