@@ -1,8 +1,11 @@
+/* globals suite, test */
+/* jshint node: true */
+'use strict';
 var assert = require('assert');
 var xss    = require('./../lib/xss');
 
 // Attack vectors copied from https://www.owasp.org/index.php/XSS_Filter_Evasion_Cheat_Sheet
-var vectors = require('fs').readFileSync(__dirname + '/tests.txt', 'utf8');
+//var vectors = require('fs').readFileSync(__dirname + '/tests.txt', 'utf8');
 
 suite('XSS', function () {
   test('Correctly removes non whitelisted tags.', function (done) {
@@ -34,4 +37,3 @@ suite('XSS', function () {
   //  t(parts[0], parts[1], done);
   //});
 });
-

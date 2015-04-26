@@ -9,9 +9,8 @@ var hapi     = require('hapi');
 var levelup  = require('levelup');
 var path     = require('path');
 var _        = require('lodash');
-var ws       = require('ws');
 var api      = require('./api');
-var sm       = require('./lib/socket');
+var SocketManager = require('./lib/socket');
 var joi      = require('joi');
 
 //
@@ -63,9 +62,9 @@ function startServer() {
       config: {
         cache: {
           privacy: 'public',
-          //expiresIn: 24 * 3600 * 1000
+          expiresIn: 24 * 3600 * 1000
         },
-        cors: true
+        cors: cors
       }
     },
     {
@@ -73,7 +72,7 @@ function startServer() {
       method: 'POST',
       handler: api.post,
       config: {
-        cors: true,
+        cors: cors,
         payload: {
           output: 'data',
           parse: true
@@ -83,7 +82,7 @@ function startServer() {
           payload: {
             username: joi.string().min(1).max(32),
             email: joi.string().email(),
-            comment: joi.string().min(1).max(1024*3),
+            comment: joi.string().min(1).max(1024 * 3),
             resource: joi.string().min(1),
             url: joi.string() // @FIXME: Validate URL
           }
@@ -95,7 +94,7 @@ function startServer() {
       method: 'GET',
       handler: api.get,
       config: {
-        cors: { origin: ['*'] }
+        cors: cors
       }
     }
   ]);
@@ -129,5 +128,6 @@ function startServer() {
     });
   });
 
-  var socketManager = new sm(server.listener, db);
+  /* jshint nonew: false */
+  new SocketManager(server.listener, db);
 }

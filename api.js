@@ -12,11 +12,8 @@ var API = module.exports = {};
 var fs       = require('fs');
 var path     = require('path');
 var jstream  = require('JSONStream');
-var _        = require('lodash');
-var md5      = require('MD5');
-var comments = require('./lib/commentstream');
+var Comments = require('./lib/commentstream');
 var xss      = require('./lib/xss');
-var uglify   = require('uglifyjs');
 
 //
 // ## JavaScript
@@ -96,6 +93,7 @@ API.post = function postComment(request, reply) {
   }
 
   function doneFiltering(err) {
+    console.log(err);
     //if (err) {
     //  var response = reply({
     //    success: false,
@@ -155,10 +153,9 @@ API.get = function getComments(request, reply) {
   // https://github.com/hapijs/hapi/issues/2368
   // Or in JSONStream...
   responseStream._readableState = {};
-  var commentStream  = new comments();
+  var commentStream  = new Comments();
   stream.pipe(commentStream).pipe(responseStream);
 
-  var response = reply(responseStream)
+  reply(responseStream)
     .type('application/json');
 };
-

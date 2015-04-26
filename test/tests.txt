@@ -212,4 +212,3 @@ tt	p://6	6.000146.0x7.147/">XSS</A>
 <A HREF="javascript:document.location='http://www.google.com/'">XSS</A>
 
 <A HREF="http://www.gohttp://www.google.com/ogle.com/">XSS</A>
-

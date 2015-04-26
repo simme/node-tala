@@ -6,7 +6,9 @@
   "homepage": "https://github.com/simme/node-tala",
   "scripts": {
     "start": "node tala.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "node -e \"require('grunt').tasks(['test']);\"",
+    "test-all": "node -e \"require('grunt').tasks(['test-all']);\"",
+    "prepush": "npm test"
   },
   "keywords": [
     "comments",
@@ -28,5 +30,12 @@
     "nodemailer": "~0.6.0",
     "uglifyjs": "^2.4.10",
     "ws": "~0.4.31"
+  },
+  "devDependencies": {
+    "grunt": "^0.4.5",
+    "husky": "^0.7.0",
+    "istanbul": "^0.3.13",
+    "lintlovin": "^1.15.1",
+    "mocha": "^2.2.4"
   }
 }
