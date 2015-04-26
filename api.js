@@ -13,7 +13,7 @@ var fs       = require('fs');
 var path     = require('path');
 var jstream  = require('JSONStream');
 var Comments = require('./lib/commentstream');
-var xss      = require('./lib/xss');
+var sanitizeHtml = require('sanitize-html');
 
 //
 // ## JavaScript
@@ -71,38 +71,17 @@ API.post = function postComment(request, reply) {
   delete(data.namespace);
 
   var keys = ['username', 'email', 'comment', 'resource', 'url'];
-  function protectXSS(_key, done) {
-    if (typeof data[_key] !== 'string') {
-      _key = keys.shift();
-    }
-
-    if (!_key) {
-      done();
+  keys.forEach(function (key) {
+    if (typeof data[key] !== 'string') {
       return;
     }
 
-    xss(data[_key], {}, function (err, value) {
-      if (err) {
-        done(err);
-        return;
-      }
+    data[key] = sanitizeHtml(data[key]);
+  });
 
-      data[_key] = value;
-      protectXSS(keys.shift(), done);
-    });
-  }
+  storeComment(data);
 
-  function doneFiltering(err) {
-    console.log(err);
-    //if (err) {
-    //  var response = reply({
-    //    success: false,
-    //    message: 'Content filter failed.'
-    //  });
-    //  response.code(500);
-    //  return;
-    //}
-
+  function storeComment(data) {
     var key = [namespace, data.timestamp].join('~');
     var db = request.server.settings.app.db();
     db.put(key, data, {}, function (err) {
@@ -129,8 +108,6 @@ API.post = function postComment(request, reply) {
       }
     });
   }
-
-  protectXSS(keys.shift(), doneFiltering);
 };
 
 //

@@ -28,6 +28,7 @@
     "levelup": "~0.18.2",
     "lodash": "~2.4.1",
     "nodemailer": "~0.6.0",
+    "sanitize-html": "^1.6.1",
     "uglifyjs": "^2.4.10",
     "ws": "~0.4.31"
   },
