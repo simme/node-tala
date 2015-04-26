@@ -78,13 +78,12 @@ function startServer() {
           parse: true
         },
         validate: {
-          // @TODO: Make comment length configurable?
           payload: {
-            username: joi.string().min(1).max(32),
-            email: joi.string().email(),
-            comment: joi.string().min(1).max(1024 * 3),
-            resource: joi.string().min(1),
-            url: joi.string() // @FIXME: Validate URL
+            username: joi.string().min(1).max(32).required(),
+            email: joi.string().email().required(),
+            comment: joi.string().min(1).max(1024 * 3).required(),
+            resource: joi.string().min(1).required(),
+            url: joi.string().uri()
           }
         }
       }
