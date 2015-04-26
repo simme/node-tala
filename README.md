@@ -23,10 +23,12 @@ for everyone currently on the page.
 There's is currently no executable or anything. So the easiest way for now is
 probably to clone the repo using git (or just downloding a tarball):
 
-`$ git clone git@github.com:simme/node-tala.git tala`
-`$ cd tala`
-`$ npm install`
-`$ npm start`
+```
+$ git clone git@github.com:simme/node-tala.git tala
+$ cd tala
+$ npm install
+$ npm start
+```
 
 By default the server will listen on port `3000`
 
