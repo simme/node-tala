@@ -9,11 +9,12 @@
 
 var API = module.exports = {};
 
-var fs       = require('fs');
-var path     = require('path');
-var jstream  = require('JSONStream');
+//var fs = require('fs');
+var path = require('path');
+var jstream = require('JSONStream');
 var Comments = require('./lib/commentstream');
 var sanitizeHtml = require('sanitize-html');
+var uglify = require('uglifyjs');
 
 //
 // ## JavaScript
@@ -30,10 +31,12 @@ API.js = function js(request, reply) {
     return path.join(assetPath, item);
   });
 
-  //var minified = uglify.minify(files);
-  //reply(minified.code)
-  //  .type('text/javascript');
+  var minified = uglify.minify(files);
+  reply(minified.code)
+    .type('text/javascript');
 
+  return;
+  /*
   var data = [];
   function loadFile(file, cb) {
     if (!file) {

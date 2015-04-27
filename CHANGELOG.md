@@ -1,3 +1,16 @@
+### 1.0.3 (2015-04-27)
+
+
+#### Bug Fixes
+
+* **api:** payload validation improvements ([14bae87b](https://github.com/simme/node-tala/commit/14bae87b54b147b112c8345546327e9ea995dffd))
+* **client:** code cleanup ([66440782](https://github.com/simme/node-tala/commit/664407823be4fff5942665bfe562753df72b200f))
+* **code:** add lintlovin and fix linting issues ([0ddc8b56](https://github.com/simme/node-tala/commit/0ddc8b5632b8a8d07f4bd49506249571ce36a97d))
+* **xss:**
+  * replace custom XSS filtering with sanitize-html ([4b5bf740](https://github.com/simme/node-tala/commit/4b5bf740a198ad635034a42fcfea638f4bfc60f4), closes [#34](https://github.com/simme/node-tala/issues/34))
+  * make sure only http protocols are allowed as hrefs ([0103d2ba](https://github.com/simme/node-tala/commit/0103d2ba59026ad66f975f40f4733f8c9364d9b1), closes [#36](https://github.com/simme/node-tala/issues/36))
+
+
 ### 1.0.2 (2015-04-26)
 
 
